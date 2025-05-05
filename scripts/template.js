@@ -1,32 +1,32 @@
-function getPokemonTemplate(name, id, img) {
+function getPokemonTemplate(name, id, img, type) {
     return `
-            <div class="pokeCard" onclick="fetchSinglePokeInfos(this)">
+            <div data-id="${id}" data-name="${name}" data-img="${img}" data-type1="${type}" class="pokeCard" onclick="fetchSinglePokeInfos(this, '${type}')">
                 <div class="pokeCardTitle">
                     <p>#${id}</p>
                     <p>${name}</p>
                 </div>
-                <img src="${img}">
+                <img class="${type}" src="${img}">
                 <div class="pokeTypes">
                 </div>
             </div>
         `
 }
 
-function showPokeCard(element) {
+function showPokeCard(element, type) {
     document.getElementById("pokePopUp").innerHTML = `
                                                       <div id="pokePopUpContainer">
                                                         <div id="popUpTitle">
                                                             <p>#${element.dataset.id}</p>
                                                             <p>${element.dataset.name}</p>
                                                         </div>
-                                                        <img src="${element.dataset.img}">
+                                                        <img class="${type}" src="${element.dataset.img}">
                                                         <div id="popUpTypes">
-                                                            <p>${element.dataset.type1}</p>
+                                                            <p class="${element.dataset.type1}">${element.dataset.type1}</p>
                                                             <p id="type2"></p>
                                                         </div>
-                                                        <div>
-                                                            <p data-id="${element.dataset.id}" onclick="showMainInfos(this)">Main</p>
-                                                            <p data-id="${element.dataset.id}" onclick="showStats(this)">Stats</p>
+                                                        <div id="subNavigation">
+                                                            <p id="mainButton" data-id="${element.dataset.id}" onclick="showMainInfos(this)">Main</p>
+                                                            <p id="statsButton" data-id="${element.dataset.id}" onclick="showStats(this)">Stats</p>
                                                         </div>
                                                         <div id="cardInfoSelection">                                                            
                                                         </div>
@@ -39,6 +39,7 @@ function showPokeCard(element) {
 function showType2(element) {
     if(element.dataset.type2) {
         document.getElementById("type2").innerText = element.dataset.type2;
+        document.getElementById("type2").className = element.dataset.type2;
     }
 }
 
@@ -57,7 +58,7 @@ async function showStats(data) {
     </div>
     <div>
         <span>Defense</span>
-        <span>: ${responseJson.stats[2].base_stat}</span><div>
+        <span>: ${responseJson.stats[2].base_stat}</span>
     </div>
     <div>
         <span>Special-Attack</span>
@@ -72,8 +73,8 @@ async function showStats(data) {
         <span>: ${responseJson.stats[5].base_stat}</span>
     </div>
 `;
-console.log(Object.keys(responseJson));
-
+document.getElementById("statsButton").style.borderBottom = "4px solid rgb(211, 51, 51)";
+document.getElementById("mainButton").style.borderBottom = "4px solid black";
 }
 
 async function showMainInfos(data) {
@@ -87,7 +88,9 @@ async function showMainInfos(data) {
     showMainInfosTemplate(pokeHeight, pokeWeight, pokeBaseExp);
     for (let i = 0; i < abilityArray.length; i++) {
         document.getElementById("abilitySpan").innerHTML += `<p>${abilityArray[i].ability.name}</p>`;    
-    }
+    };
+    document.getElementById("mainButton").style.borderBottom = "4px solid rgb(211, 51, 51)";
+    document.getElementById("statsButton").style.borderBottom = "4px solid black";
 }
 
 function showMainInfosTemplate(height, weight, exp) {
@@ -106,7 +109,7 @@ function showMainInfosTemplate(height, weight, exp) {
         </div>
         <div>
             <span>Abilitites</span>
-            <span id="abilitySpan">:</span>
+            <span id="abilitySpan"></span>
         </div>
     `
 }

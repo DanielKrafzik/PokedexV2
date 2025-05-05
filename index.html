@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/backgroundcolors.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="./styles/standard.css">
+    <link rel="shortcut icon" href="./assets/img/pokeball_klein.png" type="image/x-icon">
     <title>Pokedex</title>
 </head>
 <body>
@@ -15,15 +17,16 @@
                 <img src="./assets/img/pokeball.png" alt="pokeball">
                 <h1>Pokedex</h1>
             </div>
-            <input type="text" id="searchInput" oninput="filterPokemon()">
+            <input type="text" id="searchInput" placeholder="Search your Pokemon" oninput="filterPokemon()">
         </div>
     </header>
 
     <main>
         <div id="pokemonContainer" class="wt1440"></div>
         <button id="morePkmnButton" onclick="showNextGroupOfPokemon()">Show more Pokemon</button>
-        <div id="pokePopUp"></div>
+        <div id="pokePopUp" class="popUp hidden"></div>
     </main>
+    <div id="overlay" class="overlay hidden" onclick="addHide()"></div>
 
     <footer>
         <div class="wt1440">
