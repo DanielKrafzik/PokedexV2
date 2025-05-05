@@ -1,8 +1,8 @@
 function getPokemonTemplate(name, id, img) {
     return `
             <div class="pokeCard" onclick="fetchSinglePokeInfos(this)">
-                <div>
-                <p>${id}</p>
+                <div class="pokeCardTitle">
+                <p>#${id}</p>
                 <p>${name}</p>
                 </div>
                 <img src="${img}">

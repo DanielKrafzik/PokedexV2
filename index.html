@@ -4,27 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./styles/standard.css">
     <title>Pokedex</title>
 </head>
 <body>
 
     <header>
-        <div>
-            <img src="" alt="">
-            <h1>Pokedex</h1>
+        <div id="headerWrapper" class="wt1440">
+            <div>
+                <img src="./assets/img/pokeball.png" alt="pokeball">
+                <h1>Pokedex</h1>
+            </div>
+            <input type="text" id="searchInput" oninput="filterPokemon()">
         </div>
-        <input type="text">
     </header>
 
     <main>
-        <div id="pokemonContainer"></div>
-        <button onclick="showNextGroupOfPokemon()">Show more Pokemon</button>
+        <div id="pokemonContainer" class="wt1440"></div>
+        <button id="morePkmnButton" onclick="showNextGroupOfPokemon()">Show more Pokemon</button>
         <div id="pokePopUp"></div>
     </main>
 
     <footer>
-        <div>
-            <img src="" alt="">
+        <div class="wt1440">
+            <img src="./assets/img/pokeball.png" alt="pokeball">
             <h1>Pokedex</h1>
         </div>
     </footer>

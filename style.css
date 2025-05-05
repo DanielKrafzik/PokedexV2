@@ -1,0 +1,100 @@
+header {
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    border-bottom: 4px solid black;
+}
+
+#headerWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+header div {
+    display: flex;
+    align-items: center;
+}
+
+header img {
+    width: 128px;
+}
+
+header input {
+    height: 32px;
+    border: 4px solid black;
+    padding: 2px;
+}
+
+main {
+    background-color: rgb(211, 51, 51);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#pokemonContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 Spalten */
+    gap: 16px; /* Abstand zwischen den Karten */
+    padding: 16px;
+    width: 100%;
+}
+
+.pokeCard {
+    cursor: pointer;
+    border: 4px solid black;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pokeCardTitle {
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+}
+
+.pokeCardTitle p{
+    margin-left: 16px;
+}
+
+.pokeTypes {
+    display: flex;
+}
+
+.pokeTypes div {
+    margin: 8px;
+}
+
+#morePkmnButton {
+    margin-bottom: 24px;
+    height: 48px;
+    padding: 8px;
+    cursor: pointer;
+    background-color: white;
+    font-weight: bold;
+    border: 4px solid black;
+}
+
+footer {
+    border-top: 4px solid black;
+}
+
+footer div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer img {
+    width: 128px;
+}
+
+.wt1440 {
+    max-width: 1440px;;
+}
