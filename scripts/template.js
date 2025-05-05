@@ -2,8 +2,8 @@ function getPokemonTemplate(name, id, img) {
     return `
             <div class="pokeCard" onclick="fetchSinglePokeInfos(this)">
                 <div class="pokeCardTitle">
-                <p>#${id}</p>
-                <p>${name}</p>
+                    <p>#${id}</p>
+                    <p>${name}</p>
                 </div>
                 <img src="${img}">
                 <div class="pokeTypes">
@@ -14,11 +14,13 @@ function getPokemonTemplate(name, id, img) {
 
 function showPokeCard(element) {
     document.getElementById("pokePopUp").innerHTML = `
-                                                      <div>
-                                                        <p>${element.dataset.name}</p>
-                                                        <p>${element.dataset.id}</p>
+                                                      <div id="pokePopUpContainer">
+                                                        <div id="popUpTitle">
+                                                            <p>#${element.dataset.id}</p>
+                                                            <p>${element.dataset.name}</p>
+                                                        </div>
                                                         <img src="${element.dataset.img}">
-                                                        <div>
+                                                        <div id="popUpTypes">
                                                             <p>${element.dataset.type1}</p>
                                                             <p id="type2"></p>
                                                         </div>
@@ -30,6 +32,7 @@ function showPokeCard(element) {
                                                         </div>
                                                       </div>                                                      
                                                     `;
+                                                    document.getElementById("pokePopUp").style.top = `${window.scrollY + 150}px`;
     showType2(element);
 }
 
