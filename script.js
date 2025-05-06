@@ -64,25 +64,30 @@ async function fetchSinglePokeDataJson(data, pokeUrl) {
   try {
     let response = await fetch(pokeUrl);
     let responseJson = await response.json();
-    let secondType;
-    if(responseJson.types[1]) {
-      secondType = responseJson.types[1].type.name;
-    }
-    return {
-      name: data,
-      id: responseJson.id,
-      img: responseJson.sprites.front_default,
-      types: responseJson.types,
-      type1: responseJson.types[0].type.name,
-      url: pokeUrl,
-      type2: secondType
-    }
+    return fetchSinglePokeDataJsonReturn(data, pokeUrl, responseJson)
   } catch {
     document.getElementById("pokemonContainer").innerHTML = `<p>Fehler beim Laden der Pokémon-Daten. Bitte versuche es später erneut.</p>`;
   }
 }
 
+function fetchSinglePokeDataJsonReturn(data, pokeUrl, responseJson) {
+  let secondType;
+  if(responseJson.types[1]) {
+    secondType = responseJson.types[1].type.name;
+  } return {
+    name: data,
+    id: responseJson.id,
+    img: responseJson.sprites.front_default,
+    types: responseJson.types,
+    type1: responseJson.types[0].type.name,
+    url: pokeUrl,
+    type2: secondType
+  }
+}
+
 function showPokeTypes(pokeTypesData) {
+  console.log(pokeCounterIndex);
+  
   for (let i = 0; i < pokeTypesData.length; i++) {
     document.querySelectorAll(".pokeTypes")[pokeCounterIndex].innerHTML += `<div class="${pokeTypesData[i].type.name}">${pokeTypesData[i].type.name}</div>`;
   }
@@ -93,14 +98,10 @@ async function showMainInfos(data) {
     let urlFinder = pokeSearchArray.filter(el => el.id === Number(data.dataset.id));
     try {
     let response = await fetch(urlFinder[0].url);
-    let responseJson = await response.json(); 
-    let pokeHeight = responseJson.height;
-    let pokeWeight = responseJson.weight;
-    let pokeBaseExp = responseJson.base_experience;
-    let abilityArray = responseJson.abilities;
-    showMainInfosTemplate(pokeHeight, pokeWeight, pokeBaseExp);
-    for (let i = 0; i < abilityArray.length; i++) {
-        document.getElementById("abilitySpan").innerHTML += `<p>${abilityArray[i].ability.name}</p>`;    
+    let responseJson = await response.json();
+    showMainInfosTemplate(responseJson.height, responseJson.weight, responseJson.base_experience);
+    for (let i = 0; i < responseJson.abilities.length; i++) {
+        document.getElementById("abilitySpan").innerHTML += `<p>${responseJson.abilities[i].ability.name}</p>`;    
     };
     document.getElementById("mainButton").style.borderBottom = "4px solid rgb(211, 51, 51)";
     document.getElementById("statsButton").style.borderBottom = "4px solid black";
@@ -134,14 +135,10 @@ async function fetchSinglePokeInfos(element, name, id, img, type1, url, type2) {
   try {
     let response = await fetch(url);
     let responseJson = await response.json();
-    let pokeHeight = responseJson.height;
-    let pokeWeight = responseJson.weight;
-    let pokeBaseExp = responseJson.base_experience;
-    let abilityArray = responseJson.abilities;
     showPokeCard(element, name, id, img, type1, type2);
-    showMainInfosTemplate(pokeHeight, pokeWeight, pokeBaseExp);
-    for (let i = 0; i < abilityArray.length; i++) {
-      document.getElementById("abilitySpan").innerHTML += `<p>${abilityArray[i].ability.name}</p>`;    
+    showMainInfosTemplate(responseJson.height, responseJson.weight, responseJson.base_experience);
+    for (let i = 0; i < responseJson.abilities.length; i++) {
+      document.getElementById("abilitySpan").innerHTML += `<p>${responseJson.abilities[i].ability.name}</p>`;    
     };
     toggleHide();  
     document.body.style.overflow = "hidden";
@@ -161,24 +158,36 @@ async function saveDataToFilter() {
     let allPokeApi = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1302";
     let response = await fetch(allPokeApi);
     let responseJson = await response.json();
-    let pokeSearchArrayFunction = [];
-    for (let i = 0; i < responseJson.results.length; i++) {
-      let searchCounter = i + 1;
-      let pokeName = responseJson.results[i].name;
-      pokeSearchArrayFunction.push({name: pokeName, id: searchCounter, url: responseJson.results[i].url});
-    }
-    pokeSearchArray = await Promise.all(pokeSearchArrayFunction);
+    saveDataToFilterLoop(responseJson);
   } catch {
-    console.error("Fehler beim Laden der PokeAPI:", error);
+    console.error("Fehler beim Laden der PokeAPI");
   }  
+}
+
+async function saveDataToFilterLoop(responseJson) {
+  let pokeSearchArrayFunction = [];
+  for (let i = 0; i < responseJson.results.length; i++) {
+    let searchCounter = i + 1;
+    let pokeName = responseJson.results[i].name;
+    pokeSearchArrayFunction.push({name: pokeName, id: searchCounter, url: responseJson.results[i].url});
+  }
+  pokeSearchArray = await Promise.all(pokeSearchArrayFunction);
 }
 
 async function filterPokemon() {
   let input = document.getElementById('searchInput').value.toLowerCase();  
-  if (input.length < 3) {
+  if (input.length === 0) {
     globalReset();
+    fetchPokeDataJson('https://pokeapi.co/api/v2/pokemon/');
+  } else if (input.length < 3) {
     return;
+  } else {
+    filterPokemonElse(input);
   }
+}
+
+async function filterPokemonElse(input) {
+  globalReset();
   let matchingPokemon = pokeSearchArray.filter(pokemon => pokemon.name.includes(input));
   document.getElementById('pokemonContainer').innerHTML = '';
   pokeCounterIndex = 0;
@@ -188,6 +197,9 @@ async function filterPokemon() {
     document.getElementById('pokemonContainer').innerHTML += card;
     showPokeTypesFilter(poke.url);
   }
+  if (!matchingPokemon[0]) {
+    document.getElementById('pokemonContainer').innerHTML = '<p>This Pokemon doesnt exist!</p>';
+  }
 }
 
 function globalReset() {
@@ -196,7 +208,6 @@ function globalReset() {
   pokeCounterIndex = 0;
   pokeContainerCounter = 0;
   pokeDataCounter = 0;
-  fetchPokeDataJson('https://pokeapi.co/api/v2/pokemon/');
 }
 
 async function fetchSinglePokeCard(url, id, name) {
@@ -216,13 +227,9 @@ async function fetchSinglePokeCard(url, id, name) {
 }
 
 async function showPokeTypesFilter(url) {
-  try {
   let response = await fetch(url);
   let data = await response.json();
   showPokeTypes(data.types);
-  } catch {
-    console.error("Fehler beim Laden der PokeAPI");
-  }
 }
 
 async function fetchSinglePokeInfosPrevious(element) {
@@ -232,35 +239,43 @@ async function fetchSinglePokeInfosPrevious(element) {
   }  
   let urlFinder = pokeSearchArray.filter(el => el.id === Number(element.dataset.id));  
   try {
-    let response = await fetch(urlFinder[0].url);
-    let responseJson = await response.json();
-    document.getElementById("previousButton").dataset.name = responseJson.forms[0].name;
-    document.getElementById("previousButton").dataset.img = responseJson.sprites.front_default;
-    document.getElementById("previousButton").dataset.type1 = responseJson.types[0].type.name;
-    if(responseJson.types[1]) {
-      document.getElementById("previousButton").dataset.type2 = responseJson.types[1].type.name;
-    }
-    showPreviousInfos(responseJson, element);
+    fetchSinglePokeInfosPreviousTry(element, urlFinder);
   } catch {
     console.error("Fehler beim Laden der PokeAPI:", error);
   }
 }
 
+async function fetchSinglePokeInfosPreviousTry(element, urlFinder) {  
+  let response = await fetch(urlFinder[0].url);
+  let responseJson = await response.json();
+  document.getElementById("previousButton").dataset.name = responseJson.forms[0].name;
+  document.getElementById("previousButton").dataset.img = responseJson.sprites.front_default;
+  document.getElementById("previousButton").dataset.type1 = responseJson.types[0].type.name;
+  if(responseJson.types[1]) {
+    document.getElementById("previousButton").dataset.type2 = responseJson.types[1].type.name;
+  }
+  showPreviousInfos(responseJson, element);
+}
+
 async function fetchSinglePokeInfosNext(element) {
   let urlFinder = pokeSearchArray.filter(el => el.id === Number(element.dataset.id))
-  try {   
-    let response = await fetch(urlFinder[0].url);
-    let responseJson = await response.json();
-    document.getElementById("nextButton").dataset.name = responseJson.forms[0].name;
-    document.getElementById("nextButton").dataset.img = responseJson.sprites.front_default;
-    document.getElementById("nextButton").dataset.type1 = responseJson.types[0].type.name;
-    if(responseJson.types[1]) {
-      document.getElementById("nextButton").dataset.type2 = responseJson.types[1].type.name;
-    }
-    showPreviousInfos(responseJson, element);
+  try {
+    fetchSinglePokeInfosNextTry(element, urlFinder);
   } catch {
     console.error("Fehler beim Laden der PokeAPI:", error);
   }
+}
+
+async function fetchSinglePokeInfosNextTry(element, urlFinder) {     
+  let response = await fetch(urlFinder[0].url);
+  let responseJson = await response.json();
+  document.getElementById("nextButton").dataset.name = responseJson.forms[0].name;
+  document.getElementById("nextButton").dataset.img = responseJson.sprites.front_default;
+  document.getElementById("nextButton").dataset.type1 = responseJson.types[0].type.name;
+  if(responseJson.types[1]) {
+    document.getElementById("nextButton").dataset.type2 = responseJson.types[1].type.name;
+  }
+  showPreviousInfos(responseJson, element);
 }
 
 function showPreviousInfos(responseJson, element) {

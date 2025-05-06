@@ -5,6 +5,7 @@ header {
     align-items: center;
     margin: 0 auto;
     border-bottom: 4px solid black;
+    width: 100%;
 }
 
 #headerWrapper {
@@ -35,6 +36,7 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-grow: 1;
 }
 
 #pokemonContainer {
@@ -235,6 +237,7 @@ main {
 
 footer {
     border-top: 4px solid black;
+    width: 100%;
 }
 
 footer div{
