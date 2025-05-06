@@ -1,6 +1,11 @@
 window.addEventListener('load', () => {
   fetchPokeDataJson('https://pokeapi.co/api/v2/pokemon/');
   saveDataToFilter();
+  document.body.style.overflow = "hidden";
+  setTimeout(() => {
+    document.getElementById("loadingScreen").style.display = "none";
+    document.body.style.overflow = "";
+  }, 1000);
 });
 
 let pokeData;
@@ -68,10 +73,10 @@ function showPokeTypes(pokeTypesData) {
 function showNextGroupOfPokemon() {
   pokeContainerCounter += 20;
   let nextUrl = `https://pokeapi.co/api/v2/pokemon/?offset=${pokeCounter}&limit=20`;
-  fetchPokeDataJson(nextUrl)
+  fetchPokeDataJson(nextUrl);
 }
 
-async function fetchSinglePokeInfos(element, type) {
+async function fetchSinglePokeInfos(element, name, id, img, type1, type2) {
   let singlePokeApi = "https://pokeapi.co/api/v2/pokemon/" + element.dataset.id;
   let response = await fetch(singlePokeApi);
   let responseJson = await response.json();
@@ -79,7 +84,7 @@ async function fetchSinglePokeInfos(element, type) {
   let pokeWeight = responseJson.weight;
   let pokeBaseExp = responseJson.base_experience;
   let abilityArray = responseJson.abilities;
-  showPokeCard(element, type);
+  showPokeCard(element, name, id, img, type1, type2);
   showMainInfosTemplate(pokeHeight, pokeWeight, pokeBaseExp);
   for (let i = 0; i < abilityArray.length; i++) {
     document.getElementById("abilitySpan").innerHTML += `<p>${abilityArray[i].ability.name}</p>`;    
@@ -143,8 +148,12 @@ async function fetchSinglePokeCard(id, name) {
   let response = await fetch(url);
   let data = await response.json();
   let img = data.sprites.front_default;
-  let popUpType = data.types[0].type.name;
-  return getPokemonTemplate(name, id, img, popUpType);
+  let popUpType1 = data.types[0].type.name;
+  let popUpType2;
+  if(data.types[1]) {
+    popUpType2 = data.types[1].type.name; 
+  }
+  return getPokemonTemplate(name, id, img, popUpType1, popUpType2);
 }
 
 async function showPokeTypesFilter(id) {
@@ -152,4 +161,46 @@ async function showPokeTypesFilter(id) {
   let response = await fetch(url);
   let data = await response.json();
   showPokeTypes(data.types);
+}
+
+async function fetchSinglePokeInfosPrevious(element) {
+  if(element.dataset.id === "0") {
+    document.getElementById("firstPkmn").style.color = "red";
+    return document.getElementById("firstPkmn").innerText = "This is the first Pokemon";
+  }  
+  let singlePokeApi = "https://pokeapi.co/api/v2/pokemon/" + element.dataset.id;    
+  let response = await fetch(singlePokeApi);
+  let responseJson = await response.json();
+  document.getElementById("previousButton").dataset.name = responseJson.forms[0].name;
+  document.getElementById("previousButton").dataset.img = responseJson.sprites.front_default;
+  document.getElementById("previousButton").dataset.type1 = responseJson.types[0].type.name;
+  if(responseJson.types[1]) {
+    document.getElementById("previousButton").dataset.type2 = responseJson.types[1].type.name;
+  }
+  showPreviousInfos(responseJson, element);
+}
+
+async function fetchSinglePokeInfosNext(element) {
+  let singlePokeApi = "https://pokeapi.co/api/v2/pokemon/" + element.dataset.id;    
+  let response = await fetch(singlePokeApi);
+  let responseJson = await response.json();
+  document.getElementById("nextButton").dataset.name = responseJson.forms[0].name;
+  document.getElementById("nextButton").dataset.img = responseJson.sprites.front_default;
+  document.getElementById("nextButton").dataset.type1 = responseJson.types[0].type.name;
+  if(responseJson.types[1]) {
+    document.getElementById("nextButton").dataset.type2 = responseJson.types[1].type.name;
+  }
+  showPreviousInfos(responseJson, element);
+}
+
+function showPreviousInfos(responseJson, element) {
+  let pokeHeight = responseJson.height;
+  let pokeWeight = responseJson.weight;
+  let pokeBaseExp = responseJson.base_experience;
+  let abilityArray = responseJson.abilities;
+  showPokeCard(element, element.dataset.name, element.dataset.id, element.dataset.img, element.dataset.type1);
+  showMainInfosTemplate(pokeHeight, pokeWeight, pokeBaseExp);
+  for (let i = 0; i < abilityArray.length; i++) {
+    document.getElementById("abilitySpan").innerHTML += `<p>${abilityArray[i].ability.name}</p>`;    
+  };
 }

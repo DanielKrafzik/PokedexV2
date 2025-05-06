@@ -1,38 +1,46 @@
-function getPokemonTemplate(name, id, img, type) {
+function getPokemonTemplate(name, id, img, type1, type2) {
+    if(type2 === undefined) {
+        type2 = "";
+    }
     return `
-            <div data-id="${id}" data-name="${name}" data-img="${img}" data-type1="${type}" class="pokeCard" onclick="fetchSinglePokeInfos(this, '${type}')">
+            <div data-id="${id}" data-name="${name}" data-img="${img}" data-type1="${type1}" data-type2="${type2}" class="pokeCard" onclick="fetchSinglePokeInfos(this, '${name}', '${id}', '${img}', '${type1}', '${type2}')">
                 <div class="pokeCardTitle">
                     <p>#${id}</p>
                     <p>${name}</p>
                 </div>
-                <img class="${type}" src="${img}">
+                <img class="${type1}" src="${img}">
                 <div class="pokeTypes">
                 </div>
             </div>
         `
 }
 
-function showPokeCard(element, type) {
+function showPokeCard(element, name, id, img, type1, type2) {
     document.getElementById("pokePopUp").innerHTML = `
                                                       <div id="pokePopUpContainer">
                                                         <div id="popUpTitle">
-                                                            <p>#${element.dataset.id}</p>
-                                                            <p>${element.dataset.name}</p>
+                                                            <p>#${id}</p>
+                                                            <p>${name}</p>
                                                         </div>
-                                                        <img class="${type}" src="${element.dataset.img}">
+                                                        <img class="${type1}" src="${img}">
                                                         <div id="popUpTypes">
-                                                            <p class="${element.dataset.type1}">${element.dataset.type1}</p>
+                                                            <p class="${type1}">${type1}</p>
                                                             <p id="type2"></p>
                                                         </div>
                                                         <div id="subNavigation">
-                                                            <p id="mainButton" data-id="${element.dataset.id}" onclick="showMainInfos(this)">Main</p>
-                                                            <p id="statsButton" data-id="${element.dataset.id}" onclick="showStats(this)">Stats</p>
+                                                            <p id="mainButton" data-id="${id}" onclick="showMainInfos(this)">Main</p>
+                                                            <p id="statsButton" data-id="${id}" onclick="showStats(this)">Stats</p>
                                                         </div>
                                                         <div id="cardInfoSelection">                                                            
                                                         </div>
+                                                        <div id="switchButtons">
+                                                            <button id="previousButton" data-id="${element.dataset.id - 1}" onClick="fetchSinglePokeInfosPrevious(this)">Previous</button>
+                                                            <button id="nextButton" data-id="${Number(id) + 1}" onClick="fetchSinglePokeInfosNext(this)">Next</button>
+                                                        </div>
+                                                        <p id="firstPkmn"></p>
                                                       </div>                                                      
                                                     `;
-                                                    document.getElementById("pokePopUp").style.top = `${window.scrollY + 150}px`;
+    document.getElementById("pokePopUp").style.top = `${window.scrollY + 150}px`;
     showType2(element);
 }
 
