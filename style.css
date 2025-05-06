@@ -43,6 +43,7 @@ main {
     gap: 16px;
     padding: 16px;
     width: 100%;
+    text-align: center;
 }
 
 .pokeCard {
@@ -84,6 +85,7 @@ main {
     display: flex;
     border-top: 4px solid black;
     width: 100%;
+    height: 100%;
 }
 
 .pokeTypes div {
@@ -152,7 +154,7 @@ main {
 }
 
 #popUpTypes p {
-    width: 20%;
+    width: 50%;
     padding: 8px;
 }
 
@@ -268,19 +270,19 @@ footer img {
     display: none !important;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 1050px) {
     #pokemonContainer {
         grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  @media (max-width: 660px) {
+  @media (max-width: 800px) {
     #pokemonContainer {
         grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 540px) {
     #pokemonContainer {
         display: flex;
         flex-direction: column;
@@ -298,6 +300,17 @@ footer img {
     #headerWrapper {
         display: flex;
         flex-direction: column;
+    }
+
+    #pokemonContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .pokeCard {
+        max-width: 400px;
+        width: 80%
     }
 
     .pokeCard:hover {
