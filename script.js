@@ -86,8 +86,6 @@ function fetchSinglePokeDataJsonReturn(data, pokeUrl, responseJson) {
 }
 
 function showPokeTypes(pokeTypesData) {
-  console.log(pokeCounterIndex);
-  
   for (let i = 0; i < pokeTypesData.length; i++) {
     document.querySelectorAll(".pokeTypes")[pokeCounterIndex].innerHTML += `<div class="${pokeTypesData[i].type.name}">${pokeTypesData[i].type.name}</div>`;
   }
@@ -126,6 +124,9 @@ async function showStats(data) {
 function showNextGroupOfPokemon() {
   document.getElementById("morePkmnButton").disabled = true;
   document.getElementById("morePkmnButton").innerText = "Loading...";
+  if (document.getElementById("pkmnInfo")) {
+    document.getElementById("pkmnInfo").remove();
+  }  
   pokeContainerCounter += 20;
   let nextUrl = `https://pokeapi.co/api/v2/pokemon/?offset=${pokeCounter}&limit=20`;
   fetchPokeDataJson(nextUrl);
@@ -198,7 +199,7 @@ async function filterPokemonElse(input) {
     showPokeTypesFilter(poke.url);
   }
   if (!matchingPokemon[0]) {
-    document.getElementById('pokemonContainer').innerHTML = '<p>This Pokemon doesnt exist!</p>';
+    document.getElementById('pokemonContainer').innerHTML = '<p id="pkmnInfo">This Pokemon doesnt exist!</p>';
   }
 }
 
